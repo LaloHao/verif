@@ -1,1 +1,7 @@
-# verif
+# -*- auto-export-latex: t -*-
+#+MACRO: NEWLINE @@latex:\@@
+#+TITLE: Verificación de circuitos digitales con software libre
+# #+SUBTITLE: Asignatura: Verificación de circuitos digitales
+#+AUTHOR: Eduardo Vázquez Díaz {{{NEWLINE}}} lalohao@gmail.com
+#+LaTeX_CLASS: IEEEtran
+#+LANGUAGE: es
