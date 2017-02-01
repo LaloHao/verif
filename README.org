@@ -1,7 +1,65 @@
 # -*- auto-export-latex: t -*-
-#+MACRO: NEWLINE @@latex:\@@
+#+MACRO: NEWLINE @@latex:\\@@
 #+TITLE: Verificación de circuitos digitales con software libre
 # #+SUBTITLE: Asignatura: Verificación de circuitos digitales
 #+AUTHOR: Eduardo Vázquez Díaz {{{NEWLINE}}} lalohao@gmail.com
 #+LaTeX_CLASS: IEEEtran
 #+LANGUAGE: es
+
+#+BEGIN_abstract
+Se creó una maquina virtual con /Ubuntu Desktop 16.04.1/ _LTS_ en un
+contenedor utilizando el software de virtualizacion =Qemu=, donde
+posteriormente se instaló =verilator= y =gtkwave=; a partir de este
+sistema se exponen algunas técnicas para simular circuitos con
+verilog/C++, además de visualizar las ondas generadas de manera
+gráfica.
+#+END_abstract
+
+* Introducción
+  La importancia de probar los circuitos antes de ser llevados al silicio
+  puede representar millones de dolares invertidos, sin contar el
+  tiempo que se llevó a cabo en el diseño, y el que se necesitará
+  volver a invertir para arreglarlo.
+
+  En 1990 el lenguaje de descripción de hardware mas usado era VHDL, a
+  pesar de que solo tenia constructores básicos para probar los
+  circuitos (TestBench). Los diseños empezaban a crecer y nuevo
+  software comercial se creaba para compensar, algunas empresas
+  invertían horas de trabajo para crear su propio sistema y no pagar
+  los miles de dolares en licencias, una de ellas llevó a la creación
+  de Accelera que fue la base de SystemVerilog cite:spear08_system.
+
+  De la misma manera surgió =Verilator=, un simulador potente de
+  Verilog HDL que además es software libre, este compila el código y
+  lo optimiza para ser simulado rápidamente cite:verilator-intro.
+** Virtualización
+   La maquina virtual permite encapsular nuestro sistema de
+   verificación en un contenedor que no será afectado (y que no
+   afectará) la maquina utilizada, esto elimina errores que podrian ser
+   causados al tener instalado software que utilice configuraciones
+   globales (PATHS) como ocurre con =HSPICE= y =Questa SIM= por
+   ejemplo.
+
+   #+CAPTION: Las maquinas virtuales pueden o no conectarse entre ellas o hacia la red externa y pueden ser de diferentes arquitecturas y sistemas operativos independientemente del sistema anfitrion.
+   #+NAME: fig:virtualizacion
+   #+ATTR_LATEX: :width 7cm
+   #+ATTR_LATEX: :float
+   [[file:virtualizacion.jpg]]
+
+   Se le dice anfitrión a la maquina donde se encuentran los
+   contenedores virtuales, en este caso la anfitriona usa /Arch Linux/,
+   pero esto no afecta a los contenedores ya que estan aislados, esto
+   aplica de igual manera para Windows o Mac.
+** Requisitos
+   En la maquina virtual (Ubuntu) se instala el software necesario
+   para simular, al igual que el editor de texto de su preferencia
+   para modificar los archivos.
+*** Verilator y GTKwave
+    Se pueden instalar desde la terminal con el siguiente comando
+    cite:verilator-instalacion:
+    #+BEGIN_SRC bash :exports code
+      sudo apt-get install git make autoconf \
+           g++ flex bison verilator gtkwave
+    #+END_SRC
+* Referencias                                                      :no_title:
+  #+BIBLIOGRAPHY: bibliografia.bib plain limit:t
