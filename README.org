@@ -22,25 +22,27 @@ gráfica.
   para arreglarlo.
 
   En 1990 el lenguaje de descripción de hardware mas usado era VHDL, a
-  pesar de que solo tenia constructores básicos para probar los
-  circuitos (TestBench). Los diseños empezaban a crecer y nuevo
-  software comercial se creaba para compensar, algunas empresas
-  invertían horas de trabajo para crear su propio sistema y no pagar
-  los miles de dolares en licencias, una de ellas llevó a la creación
-  de Accelera que fue la base de SystemVerilog cite:spear08_system.
+  pesar de que solo tenia constructores básicos para probar
+  (TestBench) los circuitos . Los diseños empezaban a crecer y nuevo
+  software comercial se creaba para compensar la falta de funciones.
+  Algunas empresas invertían horas de trabajo para crear su propio
+  sistema y no pagar los miles de dolares en licencias, una de ellas
+  llevó a la creación de Accelera que fue la base de SystemVerilog
+  cite:spear08_system.
 
   De la misma manera surgió =Verilator=, un simulador potente de
   Verilog HDL que además es software libre, este compila el código y
   lo optimiza para ser simulado rápidamente cite:verilator-intro, en
   algunos casos es incluso mas veloz que los simuladores comerciales
   cite:verilator-vs-comercial.
+
 ** Virtualización
-   La maquina virtual permite encapsular nuestro sistema de
-   verificación en un contenedor que no será afectado (y que no
-   afectará) la maquina utilizada, esto elimina errores que podrian ser
-   causados al tener instalado software que utilice configuraciones
-   globales (PATHS) como ocurre con =HSPICE= y =Questa SIM= por
-   ejemplo.
+   La maquina virtual permite encapsular el sistema de verificación de
+   circuitos en un contenedor que no será afectado (y que no afectará)
+   la maquina utilizada, esto elimina errores que podrian ser causados
+   al tener instalado software que utilice configuraciones con
+   variables globales (PATHS) como ocurre con =HSPICE= y =Questa SIM=
+   por ejemplo.
 
    #+CAPTION: Las maquinas virtuales pueden o no conectarse entre ellas o hacia la red externa y pueden ser de diferentes arquitecturas y sistemas operativos independientemente del sistema anfitrion.
    #+NAME: fig:virtualizacion
@@ -49,19 +51,42 @@ gráfica.
    [[file:virtualizacion.jpg]]
 
    Se le dice anfitrión a la maquina donde se encuentran los
-   contenedores virtuales, en este caso la anfitriona usa /Arch Linux/,
-   pero esto no afecta a los contenedores ya que estan aislados, esto
-   aplica de igual manera para Windows o Mac.
-** Requisitos
-   En la maquina virtual (Ubuntu) se instala el software necesario
-   para simular, al igual que el editor de texto de su preferencia
-   para modificar los archivos.
-*** Verilator y GTKwave
-    Se pueden instalar desde la terminal con el siguiente comando
-    cite:verilator-instalacion:
-    #+BEGIN_SRC bash :exports code
-      sudo apt-get install git make autoconf \
-           g++ flex bison verilator gtkwave
-    #+END_SRC
+   contenedores virtuales, en este caso la anfitriona usa /Arch
+   Linux/, pero esto no afecta a los contenedores ya que estan
+   aislados, por lo que esto se puede aplicar de igual manera en
+   Windows o Mac.
+* Desarrollo
+  Para instalar la maquina virtual se utiliza la linea de comandos,
+  creando el disco duro virtual llamado *verif*, con un tamaño de
+  10Gb, posteriormente se carga el archivo =ISO= de Ubuntu en el disco
+  duro creado, con 2G de memoria RAM y se procede a instalar el
+  sistema operativo de forma normal.
+
+  #+BEGIN_SRC bash :exports code
+    qemu-img create -f raw verif 10G
+    qemu-system-x86_64 -cdrom ubuntu.iso \
+                       --boot order=d -drive \
+                       file=verif,format=raw \
+                       -m 2G
+  #+END_SRC
+
+  \newpage
+  Una vez instalado el sistema operativo se puede iniciar de la
+  siguiente forma:
+
+  #+BEGIN_SRC bash :exports code
+    qemu-system-x86_64 --boot order=d \
+       -drive file=verif,format=raw -m 2G
+  #+END_SRC
+
+  Posteriormente en la maquina virtual (Ubuntu) se instala el software
+  necesario para simular cite:verilator-instalacion, al igual que el
+  editor de texto de su preferencia para modificar los archivos :
+
+   #+BEGIN_SRC bash :exports code
+     sudo apt-get install git make autoconf \
+          g++ flex bison verilator gtkwave
+   #+END_SRC
+
 * Referencias                                                      :no_title:
   #+BIBLIOGRAPHY: bibliografia.bib plain limit:t
