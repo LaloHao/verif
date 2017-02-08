@@ -1,4 +1,4 @@
-% Created 2017-02-01 mié 13:19
+% Created 2017-02-01 mié 20:42
 % Intended LaTeX compiler: pdflatex
 \documentclass[11pt]{/home/hao/dev/org/latex-plantilla/IEEEtran}
 \usepackage[spanish, mexico]{babel}
@@ -43,11 +43,11 @@ gráfica.
 \end{abstract}
 
 \section{Introducción}
-\label{sec:org7a2e3d2}
-La importancia de probar los circuitos antes de ser llevados al silicio
-puede representar millones de dolares invertidos, sin contar el
-tiempo que se llevó a cabo en el diseño, y el que se necesitará
-volver a invertir para arreglarlo.
+\label{sec:org5224c39}
+La importancia de probar los circuitos antes de ser llevados al
+silicio puede representar millones de dolares, sin contar el tiempo
+invertido en el diseño, y el que se necesitará volver a invertir
+para arreglarlo.
 
 En 1990 el lenguaje de descripción de hardware mas usado era VHDL, a
 pesar de que solo tenia constructores básicos para probar los
@@ -59,9 +59,11 @@ de Accelera que fue la base de SystemVerilog \cite{spear08_system}.
 
 De la misma manera surgió \texttt{Verilator}, un simulador potente de
 Verilog HDL que además es software libre, este compila el código y
-lo optimiza para ser simulado rápidamente \cite{verilator-intro}.
+lo optimiza para ser simulado rápidamente \cite{verilator-intro}, en
+algunos casos es incluso mas veloz que los simuladores comerciales
+\cite{verilator-vs-comercial}.
 \subsection{Virtualización}
-\label{sec:org812a018}
+\label{sec:orgcf7f2d8}
 La maquina virtual permite encapsular nuestro sistema de
 verificación en un contenedor que no será afectado (y que no
 afectará) la maquina utilizada, esto elimina errores que podrian ser
@@ -71,7 +73,7 @@ ejemplo.
 
 \begin{center}
 \includegraphics[width=7cm]{virtualizacion.jpg}
-\captionof{figure}{\label{fig:org300a892}
+\captionof{figure}{\label{fig:orgaa5feaf}
 Las maquinas virtuales pueden o no conectarse entre ellas o hacia la red externa y pueden ser de diferentes arquitecturas y sistemas operativos independientemente del sistema anfitrion.}
 \end{center}
 
@@ -80,12 +82,12 @@ contenedores virtuales, en este caso la anfitriona usa \emph{Arch Linux},
 pero esto no afecta a los contenedores ya que estan aislados, esto
 aplica de igual manera para Windows o Mac.
 \subsection{Requisitos}
-\label{sec:orgc5df779}
+\label{sec:org00c4894}
 En la maquina virtual (Ubuntu) se instala el software necesario
 para simular, al igual que el editor de texto de su preferencia
 para modificar los archivos.
 \subsubsection{Verilator y GTKwave}
-\label{sec:org0d8baab}
+\label{sec:org004c2c5}
 Se pueden instalar desde la terminal con el siguiente comando
 \cite{verilator-instalacion}:
 \begin{minted}[]{bash}

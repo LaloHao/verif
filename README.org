@@ -16,10 +16,10 @@ gráfica.
 #+END_abstract
 
 * Introducción
-  La importancia de probar los circuitos antes de ser llevados al silicio
-  puede representar millones de dolares invertidos, sin contar el
-  tiempo que se llevó a cabo en el diseño, y el que se necesitará
-  volver a invertir para arreglarlo.
+  La importancia de probar los circuitos antes de ser llevados al
+  silicio puede representar millones de dolares, sin contar el tiempo
+  invertido en el diseño, y el que se necesitará volver a invertir
+  para arreglarlo.
 
   En 1990 el lenguaje de descripción de hardware mas usado era VHDL, a
   pesar de que solo tenia constructores básicos para probar los
@@ -31,7 +31,9 @@ gráfica.
 
   De la misma manera surgió =Verilator=, un simulador potente de
   Verilog HDL que además es software libre, este compila el código y
-  lo optimiza para ser simulado rápidamente cite:verilator-intro.
+  lo optimiza para ser simulado rápidamente cite:verilator-intro, en
+  algunos casos es incluso mas veloz que los simuladores comerciales
+  cite:verilator-vs-comercial.
 ** Virtualización
    La maquina virtual permite encapsular nuestro sistema de
    verificación en un contenedor que no será afectado (y que no
