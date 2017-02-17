@@ -5,6 +5,7 @@
 #+AUTHOR: Eduardo Vázquez Díaz {{{NEWLINE}}} lalohao@gmail.com
 #+LaTeX_CLASS: IEEEtran
 #+LANGUAGE: es
+#+OPTIONS: _:nil
 
 #+BEGIN_abstract
 Se creó una maquina virtual con /Ubuntu Desktop 16.04.1/ _LTS_ en un
@@ -21,9 +22,9 @@ gráfica.
   invertido en el diseño, y el que se necesitará volver a invertir
   para arreglarlo.
 
-  En 1990 el lenguaje de descripción de hardware mas usado era VHDL, a
+  En 1990 el lenguaje de descripción de hardware mas usado era VHDL a
   pesar de que solo tenia constructores básicos para probar
-  (TestBench) los circuitos . Los diseños empezaban a crecer y nuevo
+  (TestBench) los circuitos. Los diseños empezaban a crecer y nuevo
   software comercial se creaba para compensar la falta de funciones.
   Algunas empresas invertían horas de trabajo para crear su propio
   sistema y no pagar los miles de dolares en licencias, una de ellas
@@ -83,10 +84,128 @@ gráfica.
   necesario para simular cite:verilator-instalacion, al igual que el
   editor de texto de su preferencia para modificar los archivos :
 
-   #+BEGIN_SRC bash :exports code
-     sudo apt-get install git make autoconf \
-          g++ flex bison verilator gtkwave
+  #+BEGIN_SRC bash :exports code
+    sudo apt-get install git make \
+         autoconf g++ flex bison \
+         verilator gtkwave
+  #+END_SRC
+** Ejemplo 1: Compuerta AND
+   :PROPERTIES:
+   :ID:       51264eef-d888-4bbb-933e-983c0be58cb7
+   :END:
+   Para entender el proceso de simulación es necesario entender la
+   estructura jerárquica del espacio de trabajo.
+
+   Clona el siguiente repositorio:
+
+   #+BEGIN_SRC shell
+     git clone \
+     github.com/LaloHao/verilator_test
    #+END_SRC
 
+   Dentro se encuentra una carpeta donde se simula la compuerta =and=,
+   en ella se encuentran los siguientes archivos:
+
+   #+BEGIN_SRC bash
+     cand_tb.cpp
+     cand.v
+     cand.vcd
+     Makefile
+     README.md
+   #+END_SRC
+
+   El archivo =README= se puede ignorar; los archivos donde se
+   describe el comportamiento y el testbench son *cand.v*,
+   *cand-tb.cpp* respectivamente, después se encuentra el archivo
+   *cand.vcd* que es utilizado por el programa =gtkwave= para
+   visualizar las ondas al simularse, por ultimo el archivo *Makefile*
+   donde contienen todos los comandos necesarios para ejecutar y abrir
+   el visor de ondas.
+
+   Dentro de la carpeta /and/ al ejecutar el comando =make= se
+   simulará, ejecutará, y abrirá el visor de ondas automáticamente.
+
+   #+CAPTION: Visor de ondas mostrando la simulacion de la compuerta =and=.
+   #+NAME: fig:gtkwave
+   #+ATTR_LATEX: :width 9cm
+   #+ATTR_LATEX: :float
+   [[file:data/51/264eef-d888-4bbb-933e-983c0be58cb7/screenshot-20170217-105525.png]]
+
+   El archivo con extensión *.v* describe el comportamiento del
+   circuito como ya se mencionó, estas son sentencias Verilog
+   pertinentes al lenguaje por lo que se omite la explicación de su
+   contenido.
+
+*** Testbench
+    El archivo de testbench (extensión *.cpp*) contiene las
+    instrucciones necesarias para simular.
+
+    Al ejecutarse el comando =make= Verilator genera los archivos
+    *Vcand.cpp* y *Vcand.h* dentro de una carpeta llamada /obj_dir/
+    donde se contienen funciones que son llamadas para controlar el
+    flujo de señales y agregarlas al archivo *.vcd* donde se
+    visualizaran, por ello es necesario incluirlo para reverenciarlas
+    desde el testbench al igual que los /headers/ de Verilator:
+
+    #+BEGIN_SRC cpp
+      #include "Vcand.h"
+      #include "verilated.h"
+      #include "verilated_vcd_c.h"
+    #+END_SRC
+
+    Dentro del testbench se crea un pulso de reloj que se utiliza como
+    referencia para controlar el tiempo que correrá la simulación.
+
+    #+BEGIN_SRC cpp
+         int clk;
+    #+END_SRC
+
+    Las siguientes lineas son para Verilator exceptuando las que
+    contienen referencias a *Vcand* y *VcdC*; *Vcand* instancia el
+    objeto *cand.v* el cual se incluyó anteriormente, *Vcdc* es la
+    instancia del objeto donde se guardarán las ondas para
+    visualizacion.
+
+    #+BEGIN_SRC cpp
+        Verilated::commandArgs(argc, argv);
+        Vcand *top = new Vcand;
+        Verilated::traceEverOn(true);
+        VerilatedVcdC *tfp = new VerilatedVcdC;
+    #+END_SRC
+
+    El objeto llamado *top* es el archivo *cand.v*, desde ahí se
+    pueden inicializar y modificar las señales, de igual en el objeto
+    *tfp* se define en que archivo se guardarán las ondas, se enlazan
+    por medio de =trace=:
+
+    #+BEGIN_SRC cpp
+      top->trace(tfp, 99);
+      tfp->open("cand.vcd");
+      top->a = 0;
+      top->b = 0;
+    #+END_SRC
+
+    Se usa un ciclo y envían todas las señales posibles usando
+    =dump= para volcar las señales al archivo:
+
+    #+BEGIN_SRC cpp
+      for(clk = 0; clk <= 4; clk++)
+      {
+          tfp->dump(clk);
+          top->a = !top->a;
+          top->b = (clk >= 1);
+          top->eval();
+      }
+    #+END_SRC
+
+    Finalmente se dan las instrucciones pertinentes a Verilator para
+    terminar la simulación:
+
+    #+BEGIN_SRC cpp
+      if(Verilated::gotFinish())
+          exit(0);
+      tfp->close();
+      exit(0);
+    #+END_SRC
 * Referencias                                                      :no_title:
   #+BIBLIOGRAPHY: bibliografia.bib plain limit:t
