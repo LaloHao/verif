@@ -71,7 +71,6 @@ gráfica.
                        -m 2G
   #+END_SRC
 
-  \newpage
   Una vez instalado el sistema operativo se puede iniciar de la
   siguiente forma:
 
@@ -144,7 +143,7 @@ gráfica.
     *Vcand.cpp* y *Vcand.h* dentro de una carpeta llamada /obj_dir/
     donde se contienen funciones que son llamadas para controlar el
     flujo de señales y agregarlas al archivo *.vcd* donde se
-    visualizaran, por ello es necesario incluirlo para reverenciarlas
+    visualizaran, por ello es necesario incluirlo para referenciarlas
     desde el testbench al igual que los /headers/ de Verilator:
 
     #+BEGIN_SRC cpp
@@ -174,9 +173,9 @@ gráfica.
     #+END_SRC
 
     El objeto llamado *top* es el archivo *cand.v*, desde ahí se
-    pueden inicializar y modificar las señales, de igual en el objeto
-    *tfp* se define en que archivo se guardarán las ondas, se enlazan
-    por medio de =trace=:
+    pueden inicializar y modificar las señales, de igual el objeto
+    *tfp* define en que archivo se guardarán las ondas, se enlazan por
+    medio de =trace=:
 
     #+BEGIN_SRC cpp
       top->trace(tfp, 99);
@@ -207,5 +206,122 @@ gráfica.
       tfp->close();
       exit(0);
     #+END_SRC
+
+    Los nombres descriptivos de variables facilitan el reconocimiento
+    de cada objeto en proyectos mas grandes, como se verá en el
+    siguiente ejemplo.
+** Ejemplo 2: Memoria RAM
+
+   Clona el repositorio:
+
+   #+BEGIN_SRC shell
+     git clone \
+     github.com/LaloHao/8bit-cpu
+   #+END_SRC
+
+   En el se encuentran un diseño de una memoria RAM y un CPU ([[*Ejemplo 3: CPU][Ejemplo 3: CPU]]).
+
+   #+BEGIN_SRC shell
+     cpu.v
+     cpu_tb.v
+     ram.v
+     ram_tb.v
+   #+END_SRC
+*** Testbench
+    El archivo *ram_tb.v* contiene el testbench, algunos nombres de
+    variables se han cambiado para dar mas claridad, por ejemplo:
+
+    #+BEGIN_SRC cpp
+      VerilatedVcdC * gtkw = new VerilatedVcdC;
+      Vram *ram = new Vram;
+      ram->trace(gtkw, 99);
+      gtkw->open("ram.vcd");
+    #+END_SRC
+
+    Recordando que al estar usando un lenguaje como C++ se tiene todos
+    sus operadores:
+
+    #+BEGIN_SRC cpp
+      #define WRITE 1
+      #define READ 0
+    #+END_SRC
+
+    Permitiendo definir la operación que realiza la RAM:
+
+    #+BEGIN_SRC cpp
+      ram->rw = WRITE;
+      ram->rw = READ;
+    #+END_SRC
+**** Escritura
+     :PROPERTIES:
+     :ID:       6dc8aff4-6c73-44ff-8d65-ce89a75c1214
+     :END:
+
+     #+CAPTION: Escritura de RAM con datos aleatorios, es importante destacar que aunque =datain= cambie en cada pulso de reloj, la RAM solo guarda su valor en =risingedge= (cuando esta subiendo).
+     #+NAME: fig:ram-escritura
+     #+ATTR_LATEX: :width 9cm
+     #+ATTR_LATEX: :float
+     [[file:data/6d/c8aff4-6c73-44ff-8d65-ce89a75c1214/screenshot-20170328-102212.png]]
+
+     Se llenan todas las direcciones =addr= de memoria colocando en su
+     entrada =datain= un valor aleatorio modulo 16 para limitarlo
+     entre 0 y 15.
+     #+BEGIN_SRC cpp -r
+       while(i <= 15)
+       {
+           gtkw->dump(clk);
+           if(j%2)
+               i++;
+           ram->datain = rand() % 16; (ref:rand)
+           ram->addr = i;
+           ram->clk = !ram->clk;
+           ram->eval();
+           clk++;
+           j++;
+       }
+     #+END_SRC
+**** Lectura
+     :PROPERTIES:
+     :ID:       b1bb507c-4cfa-404e-bf25-9e3a67321466
+     :END:
+
+     #+CAPTION: Lectura de RAM.
+     #+NAME: fig:ram-lectura
+     #+ATTR_LATEX: :width 9cm
+     #+ATTR_LATEX: :float
+    [[file:data/b1/bb507c-4cfa-404e-bf25-9e3a67321466/screenshot-20170328-102545.png]]
+**** Reset
+     :PROPERTIES:
+     :ID:       c9deffbd-c88e-4470-adce-81f482ababd4
+     :END:
+
+     #+CAPTION: Verificacion de reset en la memoria RAM
+     #+NAME: fig:ram-escritura
+     #+ATTR_LATEX: :width 9cm
+     #+ATTR_LATEX: :float
+     [[file:data/c9/deffbd-c88e-4470-adce-81f482ababd4/screenshot-20170405-000909.png]]
+
+
+** TODO Ejemplo 3: CPU
+
+** TODO Ejemplo 4: Receptor UART
 * Referencias                                                      :no_title:
   #+BIBLIOGRAPHY: bibliografia.bib plain limit:t
+* Apéndices                                                        :no_title:
+  \appendices
+* Emacs
+  :PROPERTIES:
+  :ID:       2dd52799-180b-4118-8ce0-7e675d204eda
+  :END:
+
+  #+CAPTION: La maquina virtual contiene un editor de texto llamado =Emacs=, este interactua directamente con =Verilator= mostrando mensajes de error.
+  #+NAME: fig:
+  #+ATTR_LATEX: :width 10cm
+  #+ATTR_LATEX: :float
+  [[file:data/2d/d52799-180b-4118-8ce0-7e675d204eda/screenshot-20170327-121157.png]]
+
+  #+CAPTION: Se puede acceder al tutorial de emacs dentro de el presionando =Ctrl+h= y despues =t=.
+  #+NAME: fig:
+  #+ATTR_LATEX: :width 10cm
+  #+ATTR_LATEX: :float
+  [[file:data/2d/d52799-180b-4118-8ce0-7e675d204eda/screenshot-20170327-121659.png]]
